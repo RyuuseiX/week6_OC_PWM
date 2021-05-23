@@ -53,8 +53,15 @@ UART_HandleTypeDef huart2;
 uint8_t ADCUpdateFlag = 0;
 //Store ADC Value
 uint16_t ADCFeedBack = 0;
+float OutputVoltage = 0;
+float Error = 0;
+uint16_t WantedVoltage = 1;
+uint16_t Kp = 100;
 
-uint16_t PWMOut = 3000;
+float MaxVoltage = 3.3;
+float MaxADCValue = 4096;
+
+uint16_t PWMOut = 10000;
 
 uint64_t _micro = 0;
 uint64_t TimeOutputLoop = 0;
@@ -119,7 +126,6 @@ int main(void)
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 	// start micros
 	HAL_TIM_Base_Start_IT(&htim11);
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -267,7 +273,7 @@ static void MX_TIM1_Init(void)
   htim1.Instance = TIM1;
   htim1.Init.Prescaler = 0;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 65535;
+  htim1.Init.Period = 10000;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -466,7 +472,11 @@ static void MX_GPIO_Init(void)
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 {
 	ADCFeedBack = HAL_ADC_GetValue(&hadc1);
-	ADCUpdateFlag = 1;
+	OutputVoltage = (ADCFeedBack * MaxVoltage)/(MaxADCValue);
+ 	ADCUpdateFlag = 1;
+
+ 	Error = WantedVoltage - OutputVoltage;
+ 	PWMOut = PWMOut + (Kp*Error);
 }
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
@@ -474,6 +484,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	{
 		_micro += 65535;
 	}
+
 }
 
 __inline__ uint64_t micros()
