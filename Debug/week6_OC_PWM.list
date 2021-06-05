@@ -39,11 +39,11 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  17 .debug_line   0000da28  00000000  00000000  0004749f  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    00095743  00000000  00000000  00054ec7  2**0
+ 18 .debug_str    0009573c  00000000  00000000  00054ec7  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000053  00000000  00000000  000ea60a  2**0
+ 19 .comment      00000053  00000000  00000000  000ea603  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  000037cc  00000000  00000000  000ea660  2**2
+ 20 .debug_frame  000037cc  00000000  00000000  000ea658  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -437,7 +437,7 @@ int main(void)
  800053e:	e9c1 2300 	strd	r2, r3, [r1]
 			// #001
 
-			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, PWMOut);
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, PWM);
  8000542:	4b0b      	ldr	r3, [pc, #44]	; (8000570 <main+0xa0>)
  8000544:	881a      	ldrh	r2, [r3, #0]
  8000546:	4b07      	ldr	r3, [pc, #28]	; (8000564 <main+0x94>)
@@ -1323,39 +1323,39 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
  8000a7a:	eec6 7a87 	vdiv.f32	s15, s13, s14
  8000a7e:	4b1d      	ldr	r3, [pc, #116]	; (8000af4 <HAL_ADC_ConvCpltCallback+0xac>)
  8000a80:	edc3 7a00 	vstr	s15, [r3]
- 	ADCUpdateFlag = 1;
+	Error = WantedVoltage - OutputVoltage;
  8000a84:	4b1c      	ldr	r3, [pc, #112]	; (8000af8 <HAL_ADC_ConvCpltCallback+0xb0>)
- 8000a86:	2201      	movs	r2, #1
- 8000a88:	701a      	strb	r2, [r3, #0]
-
- 	Error = WantedVoltage - OutputVoltage;
- 8000a8a:	4b1c      	ldr	r3, [pc, #112]	; (8000afc <HAL_ADC_ConvCpltCallback+0xb4>)
- 8000a8c:	881b      	ldrh	r3, [r3, #0]
- 8000a8e:	ee07 3a90 	vmov	s15, r3
- 8000a92:	eeb8 7ae7 	vcvt.f32.s32	s14, s15
- 8000a96:	4b17      	ldr	r3, [pc, #92]	; (8000af4 <HAL_ADC_ConvCpltCallback+0xac>)
- 8000a98:	edd3 7a00 	vldr	s15, [r3]
- 8000a9c:	ee77 7a67 	vsub.f32	s15, s14, s15
+ 8000a86:	881b      	ldrh	r3, [r3, #0]
+ 8000a88:	ee07 3a90 	vmov	s15, r3
+ 8000a8c:	eeb8 7ae7 	vcvt.f32.s32	s14, s15
+ 8000a90:	4b18      	ldr	r3, [pc, #96]	; (8000af4 <HAL_ADC_ConvCpltCallback+0xac>)
+ 8000a92:	edd3 7a00 	vldr	s15, [r3]
+ 8000a96:	ee77 7a67 	vsub.f32	s15, s14, s15
+ 8000a9a:	4b18      	ldr	r3, [pc, #96]	; (8000afc <HAL_ADC_ConvCpltCallback+0xb4>)
+ 8000a9c:	edc3 7a00 	vstr	s15, [r3]
+	PWM = PWM + (Kp*Error);
  8000aa0:	4b17      	ldr	r3, [pc, #92]	; (8000b00 <HAL_ADC_ConvCpltCallback+0xb8>)
- 8000aa2:	edc3 7a00 	vstr	s15, [r3]
- 	PWMOut = PWMOut + (Kp*Error);
- 8000aa6:	4b17      	ldr	r3, [pc, #92]	; (8000b04 <HAL_ADC_ConvCpltCallback+0xbc>)
- 8000aa8:	881b      	ldrh	r3, [r3, #0]
- 8000aaa:	ee07 3a90 	vmov	s15, r3
- 8000aae:	eeb8 7ae7 	vcvt.f32.s32	s14, s15
- 8000ab2:	4b15      	ldr	r3, [pc, #84]	; (8000b08 <HAL_ADC_ConvCpltCallback+0xc0>)
- 8000ab4:	881b      	ldrh	r3, [r3, #0]
- 8000ab6:	ee07 3a90 	vmov	s15, r3
- 8000aba:	eef8 6ae7 	vcvt.f32.s32	s13, s15
- 8000abe:	4b10      	ldr	r3, [pc, #64]	; (8000b00 <HAL_ADC_ConvCpltCallback+0xb8>)
- 8000ac0:	edd3 7a00 	vldr	s15, [r3]
- 8000ac4:	ee66 7aa7 	vmul.f32	s15, s13, s15
- 8000ac8:	ee77 7a27 	vadd.f32	s15, s14, s15
- 8000acc:	eefc 7ae7 	vcvt.u32.f32	s15, s15
- 8000ad0:	ee17 3a90 	vmov	r3, s15
- 8000ad4:	b29a      	uxth	r2, r3
- 8000ad6:	4b0b      	ldr	r3, [pc, #44]	; (8000b04 <HAL_ADC_ConvCpltCallback+0xbc>)
- 8000ad8:	801a      	strh	r2, [r3, #0]
+ 8000aa2:	881b      	ldrh	r3, [r3, #0]
+ 8000aa4:	ee07 3a90 	vmov	s15, r3
+ 8000aa8:	eeb8 7ae7 	vcvt.f32.s32	s14, s15
+ 8000aac:	4b15      	ldr	r3, [pc, #84]	; (8000b04 <HAL_ADC_ConvCpltCallback+0xbc>)
+ 8000aae:	881b      	ldrh	r3, [r3, #0]
+ 8000ab0:	ee07 3a90 	vmov	s15, r3
+ 8000ab4:	eef8 6ae7 	vcvt.f32.s32	s13, s15
+ 8000ab8:	4b10      	ldr	r3, [pc, #64]	; (8000afc <HAL_ADC_ConvCpltCallback+0xb4>)
+ 8000aba:	edd3 7a00 	vldr	s15, [r3]
+ 8000abe:	ee66 7aa7 	vmul.f32	s15, s13, s15
+ 8000ac2:	ee77 7a27 	vadd.f32	s15, s14, s15
+ 8000ac6:	eefc 7ae7 	vcvt.u32.f32	s15, s15
+ 8000aca:	ee17 3a90 	vmov	r3, s15
+ 8000ace:	b29a      	uxth	r2, r3
+ 8000ad0:	4b0b      	ldr	r3, [pc, #44]	; (8000b00 <HAL_ADC_ConvCpltCallback+0xb8>)
+ 8000ad2:	801a      	strh	r2, [r3, #0]
+ 	ADCUpdateFlag = 1;
+ 8000ad4:	4b0c      	ldr	r3, [pc, #48]	; (8000b08 <HAL_ADC_ConvCpltCallback+0xc0>)
+ 8000ad6:	2201      	movs	r2, #1
+ 8000ad8:	701a      	strb	r2, [r3, #0]
+
 }
  8000ada:	bf00      	nop
  8000adc:	3708      	adds	r7, #8
@@ -1367,11 +1367,11 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
  8000aec:	20000004 	.word	0x20000004
  8000af0:	20000008 	.word	0x20000008
  8000af4:	20000040 	.word	0x20000040
- 8000af8:	2000003c 	.word	0x2000003c
- 8000afc:	20000000 	.word	0x20000000
- 8000b00:	20000044 	.word	0x20000044
- 8000b04:	2000000c 	.word	0x2000000c
- 8000b08:	20000002 	.word	0x20000002
+ 8000af8:	20000000 	.word	0x20000000
+ 8000afc:	20000044 	.word	0x20000044
+ 8000b00:	2000000c 	.word	0x2000000c
+ 8000b04:	20000002 	.word	0x20000002
+ 8000b08:	2000003c 	.word	0x2000003c
 
 08000b0c <HAL_TIM_PeriodElapsedCallback>:
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)

@@ -61,7 +61,7 @@ uint16_t Kp = 100;
 float MaxVoltage = 3.3;
 float MaxADCValue = 4096;
 
-uint16_t PWMOut = 10000;
+uint16_t PWM = 10000;
 
 uint64_t _micro = 0;
 uint64_t TimeOutputLoop = 0;
@@ -141,8 +141,10 @@ int main(void)
 		{
 			TimeOutputLoop = micros();
 			// #001
-
-			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, PWMOut);
+			OutputVoltage = (ADCFeedBack * MaxVoltage)/(MaxADCValue);
+			Error = WantedVoltage - OutputVoltage;
+			PWM = PWM + (Kp*Error);
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, PWM);
 
 		}
 
@@ -472,11 +474,9 @@ static void MX_GPIO_Init(void)
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 {
 	ADCFeedBack = HAL_ADC_GetValue(&hadc1);
-	OutputVoltage = (ADCFeedBack * MaxVoltage)/(MaxADCValue);
+
  	ADCUpdateFlag = 1;
 
- 	Error = WantedVoltage - OutputVoltage;
- 	PWMOut = PWMOut + (Kp*Error);
 }
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
